@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+    <meta name="author" content="GeeksLabs">
+    <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>项目管理系统-阿里云短信服务配置</title>
+
+    <!-- Bootstrap CSS -->    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- bootstrap theme -->
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <!--external css-->
+    <!-- font icon -->
+    <link href="css/elegant-icons-style.css" rel="stylesheet" />
+    <link href="css/font-awesome.css" rel="stylesheet" />
+    <!-- Custom styles -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <script src="js/myjs.js"></script>
+</head>
+
+  <body class="login-img3-body">
+
+    <div class="container">
+      <form class="login-form" action="sendMsgConfig" method="post">        
+        <div class="login-wrap">
+            <p class="login-img"><i class="icon_lock_alt"></i></p>
+            <p style="font-size:16px; color: red;text-align: left;">这里请输入一个确保能收到短信的手机号，仅用于短信服务的验证，若验证成功，会收到一条验证码为123456的短信</p>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_profile"></i></span>
+              <input type="text" class="form-control" placeholder="手机号" autofocus name="phone" required>
+            </div>
+            
+
+            <div class="input-group" style="padding-bottom: 20px;">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="text" class="form-control" placeholder="AccessKeyId" name="accessKeyId" required>
+            </div>
+            <div class="input-group" style="padding-bottom: 20px;">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="text" class="form-control" placeholder="AccessKeySecret" name="accessKeySecret" required>
+            </div>
+            <div class="input-group" style="padding-bottom: 20px;">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="text" class="form-control" placeholder="短信签名" name="sign" required>
+            </div>
+            <div class="input-group" style="padding-bottom: 20px;">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="text" class="form-control" placeholder="模板号templateCode" name="templateCode" required>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">提交</button>
+        </div>
+      </form>
+      
+      <form id="form2" style="width:0px; height:0px" action="regist" method="post"> 
+        <input type="hidden" id="information" th:value="${information}">
+ 	  </form>
+ 
+ 
+    </div>
+
+
+
+  </body>
+  <script th:inline="javascript">
+      /*<![CDATA[*/
+        var msg = /*[[${msg}]]*/null;
+        if(msg!=null){
+            alert(msg);
+        }
+      /*]]>*/
+  </script>
+  
+</html>

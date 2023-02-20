@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="send_Json">
+    <meta name="author" content="GeeksLabs">
+    <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>Blank | Creative - Bootstrap 3 Responsive Admin Template</title>
+
+    <!-- Bootstrap CSS -->    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- bootstrap theme -->
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <!--external css-->
+    <!-- font icon -->
+    <link href="css/elegant-icons-style.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <!-- Custom styles -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/mystyle.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+      <script src="js/lte-ie7.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <form id="myForm" action="receive" method="POST" onsubmit="return confirm('确认提交吗？')">
+        <input type="hidden" id="json" name="txt">
+    </form>
+
+  <!-- container section end -->
+    <!-- javascripts -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- nice scroll -->
+    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src="js/jquery.nicescroll.js" type="text/javascript"></script><!--custome script for all page-->
+    <script src="js/scripts.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var txt = '{"type": "dataPoint","data": {"version": 0,"dataPoints": [{"dataPointId": 123123,"slaveName": "1","variableName": "123","value": "42.12","err": 0,"time": 1539311832}],"deviceId": "123","deviceName": "balabala"}}';
+            txt = JSON.parse(txt);
+            document.getElementById("json").value=txt;
+            console.log(document.getElementById("json").value);
+            $("#myForm").submit(); 
+        
+});
+
+    </script>
+
+
+  </body>
+</html>

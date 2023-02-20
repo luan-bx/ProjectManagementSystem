@@ -1,0 +1,344 @@
+# 项目-用户关联表
+CREATE TABLE `pro_user_relation`(
+  `project_id` VARCHAR(100) NOT NULL COMMENT '项目表id',
+  `user_id` int(10) NOT NULL COMMENT '用户数据库id',
+	`created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+	PRIMARY KEY (`project_id`,`user_id`) USING BTREE,
+  INDEX `project_id`(`project_id`) USING BTREE,
+	INDEX `user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目-用户关联表';
+-- 查询
+SELECT * from `pro_user_relation`;
+-- 修改表
+drop TABLE `pro_user_relation`;
+-- 插入
+INSERT into `pro_user_relation` (`project_id`, `user_id`) VALUE (1, 1);
+
+# 项目表
+CREATE TABLE `project`(
+	`id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+	`name` varchar(100) NOT NULL COMMENT '项目名称', 
+	`status_id` int(10) NOT NULL COMMENT '项目状态id',
+	`request_id` int(10) COMMENT '项目请求id',
+	`pro_sign_id` int(10) COMMENT '项目签订id',
+	`pro_design_id` int(10) COMMENT '项目设计id',
+	`pro_product_id` int(10) COMMENT '项目生产id',
+	`pro_assembling_id` int(10) COMMENT '项目装配id',
+	`created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `name`(`name`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目表';
+-- 插入
+INSERT INTO `project` (`name`, `status_id`) VALUES ('项目1', 1);
+-- 查询
+SELECT * FROM `project`;
+-- 修改表
+DROP TABLE `project`;
+-- 更新
+UPDATE `project` SET `status_id` = 1, `request_id` = 1, `pro_sign_id` = 1, `pro_design_id` = 1, `pro_product_id` = 1, `pro_assembling_id` = 1 WHERE `id` = 1;
+
+# 项目流程状态表 pro_status
+CREATE TABLE `pro_status`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `status_name` varchar(50) NOT NULL COMMENT '流程描述', 
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `status_name`(`status_name`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目流程状态表';
+-- 查询
+SELECT * FROM `pro_status`;
+SELECT id FROM `pro_status` WHERE `status_name` = '项目设计中';
+-- 插入
+INSERT into `pro_status` (`status_name`)VALUES('项目请求中');
+INSERT into `pro_status` (`status_name`)VALUES('项目评审中');
+INSERT into `pro_status` (`status_name`)VALUES('项目签订中');
+INSERT into `pro_status` (`status_name`)VALUES('项目设计中');
+INSERT into `pro_status` (`status_name`)VALUES('项目生产中');
+INSERT into `pro_status` (`status_name`)VALUES('项目装配中');
+INSERT into `pro_status` (`status_name`)VALUES('项目审核不通过');
+insert into pro_status (status_name) value ('项目已完成');
+-- 修改
+UPDATE `pro_status` SET `status_name` = '项目审核不通过' WHERE `status_name` = '项目审核不通过!';
+
+# 项目请求表 pro_request
+CREATE TABLE `pro_request`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `name` varchar(100) NOT NULL COMMENT '项目名称', 
+	`company_name` VARCHAR(200) NOT NULL COMMENT '公司名称',
+	`description` VARCHAR(500) COMMENT '项目简单描述',
+	`sow_url` VARCHAR(300) NOT NULL COMMENT '项目的sow文件本地磁盘路径',
+	`quotation_url` VARCHAR(300) NOT NULL COMMENT '项目的报价文件本地磁盘路径',
+	`design_url` VARCHAR(300) NOT NULL COMMENT '项目的设计方案文件本地磁盘路径',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `name`(`name`) USING BTREE,
+	INDEX `company_name`(`company_name`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目请求表';
+-- 查询
+SELECT * FROM `pro_request`;
+SELECT * FROM `pro_request` WHERE `name` = '项目1';
+-- 插入
+TRUNCATE TABLE `pro_request`;
+INSERT into `pro_request` (`name`, `company_name`, `description`, `sow_url`, `quotation_url`, `design_url`)VALUES
+	('项目1', '客户公司1', '项目1的描述', '/var/project/sow/sow1_url', '/var/project/quotation/quotation1_url', '/var/project/design/design1_url'),
+	('项目2', '客户公司2', '项目2的描述', '/var/project/sow/sow2_url', '/var/project/quotation/quotation2_url', '/var/project/design/design2_url');
+	
+# 项目签订表
+CREATE TABLE `pro_sign`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `po_id` varchar(100) NOT NULL COMMENT '项目po号', 
+	`sign_id` VARCHAR(100) NOT NULL COMMENT '合同号',
+	`pro_id` VARCHAR(100) NOT NULL COMMENT '公司内部项目编号',
+	`customer_id` VARCHAR(100) NOT NULL COMMENT '客户代码',
+	`product_category` VARCHAR(50) COMMENT '产品类别',
+	`line_number` VARCHAR(100) COMMENT '生产线编号',
+	`device_number` VARCHAR(100) COMMENT '设备工位号',
+	`customer_engineer` VARCHAR(50) COMMENT '对应的客户工程师',
+	`delivery_date` timestamp(0) NOT NULL COMMENT '交货日期',
+	`pay_url` VARCHAR(300) NOT NULL COMMENT '付款条款文件本地磁盘路径',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+	INDEX `po_id`(`po_id`) USING BTREE,
+	INDEX `sign_id`(`sign_id`) USING BTREE,
+  UNIQUE INDEX `pro_id`(`pro_id`) USING BTREE,
+	INDEX `customer_id`(`customer_id`) USING BTREE,
+	INDEX `delivery_date`(`delivery_date`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目签订表';
+-- 修改表
+DROP TABLE `pro_sign`;
+-- 查询
+SELECT * FROM `pro_sign`;
+SELECT * FROM `pro_sign` WHERE `pro_id` = '项目1proId';
+-- 插入
+INSERT INTO `pro_sign` (`po_id`, `sign_id`, `pro_id`, `customer_id`, `product_category`, `line_number`, `device_number`, `customer_Engineer`, `delivery_date`, `pay_url`) VALUES
+ ('项目1poId', '项目1signId', '项目1proId', '项目1customerId', '项目1productCategory', '项目1LineNumber', '项目1deviceNumber', '项目1customerEngineer', '2022-04-01 00:00:00', '项目1payUrl'),
+ ('项目2poId', '项目2signId', '项目2proId', '项目2customerId', '项目2productCategory', '项目2LineNumber', '项目2deviceNumber', '项目2customerEngineer', '2022-06-01 00:00:00', '项目1payUrl');
+
+# 项目设计表 分为pro_design、pro_design_mechanics、pro_design_electrical、pro_design_software、pro_design_relation
+CREATE TABLE `pro_design`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `po_id` varchar(100) NOT NULL COMMENT '项目po号', 
+	`sign_id` VARCHAR(100) NOT NULL COMMENT '合同号',
+	`pro_id` VARCHAR(100) NOT NULL COMMENT '公司内部项目编号',
+	`mec_engineer` VARCHAR(50) NOT NULL COMMENT '机械设计工程师',
+	`ele_engineer` VARCHAR(50) NOT NULL COMMENT '电气设计工程师',
+	`sof_engineer` VARCHAR(50) NOT NULL COMMENT '软件设计工程师',
+	`mec_start_date` timestamp(0) NOT NULL COMMENT '机械设计开始日期',
+	`mec_end_date` timestamp(0) NOT NULL COMMENT '机械设计完成日期',
+	`ele_start_date` timestamp(0) NOT NULL COMMENT '电气设计开始日期',
+	`ele_end_date` timestamp(0) NOT NULL COMMENT '电气设计完成日期',
+	`sof_start_date` timestamp(0) NOT NULL COMMENT '软件开始日期',
+	`sof_end_date` timestamp(0) NOT NULL COMMENT '软件完成日期',
+	`tip` VARCHAR(300) NOT NULL COMMENT '备注',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+	INDEX `po_id`(`po_id`) USING BTREE,
+	INDEX `sign_id`(`sign_id`) USING BTREE,
+  UNIQUE INDEX `pro_id`(`pro_id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目设计表';
+-- 查询
+SELECT * FROM `pro_design`;
+-- 插入
+INSERT INTO `pro_design` (`po_id`, `sign_id`, `pro_id`, `mec_engineer`, `ele_engineer`, `sof_engineer`, `mec_start_date`, `mec_end_date`, `ele_start_date`, `ele_end_date`,
+`sof_start_date`, `sof_end_date`, `tip`) VALUES 
+('项目1poId', '项目1signId', '项目1proId', '项目1机械', '项目1电气', '项目1软件', '2022-01-01: 00:00:00', '2022-02-01: 00:00:00', '2022-01-01: 00:00:00', '2022-02-01: 00:00:00', 
+'2022-01-01: 00:00:00', '2022-02-01: 00:00:00', '项目1备注');
+
+CREATE TABLE `pro_design_mechanics`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `bom_url` varchar(300) NOT NULL COMMENT 'BOM表存储路径', 
+  `threeD_url` varchar(300) NOT NULL COMMENT '机械设计3D图纸',
+	`twoD_url` varchar(300) NOT NULL COMMENT '2D图纸', 
+	`gas_url` varchar(300) NOT NULL COMMENT '气路图', 
+	`comp_url` varchar(300) NOT NULL COMMENT '装配组件图', 
+	`prof_url` varchar(300) NOT NULL COMMENT '型材框架图', 
+	`vul_list_url` varchar(300) NOT NULL COMMENT '易损件清单', 
+	`vul_draw_url` varchar(300) NOT NULL COMMENT '易损件图纸',  
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '机械设计表';
+-- 查询
+SELECT * FROM `pro_design_mechanics`;
+-- 插入
+INSERT INTO `pro_design_mechanics` (`bom_url`, `threeD_url`, `twoD_url`, `gas_url`, `comp_url`, `prof_url`, `vul_list_url`, `vul_draw_url`) VALUES
+	('项目1bomurl', '项目1threeD_url', '项目1twoD_url', '项目1gas_url', '项目1comp_url', '项目1prof_url', '项目1vul_list_url', '项目1vul_draw_url');
+
+CREATE TABLE `pro_design_electrical`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `bom_url` varchar(300) NOT NULL COMMENT 'BOM表存储路径', 
+  `graph_url` varchar(300) NOT NULL COMMENT '电气图纸',
+	`list_url` varchar(300) NOT NULL COMMENT '备件清单', 
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '电气设计表';
+-- 查询
+SELECT * FROM `pro_design_electrical`;
+-- 插入
+INSERT INTO `pro_design_electrical` (`bom_url`, `graph_url`, `list_url`) VALUES
+	('项目1bomurl', '项目1graph_url', '项目1list_url');
+
+
+CREATE TABLE `pro_design_software`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `prog_url` varchar(300) NOT NULL COMMENT 'PLC程序存储路径', 
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '软件设计表';
+-- 查询
+SELECT * FROM `pro_design_software`;
+-- 插入
+INSERT INTO `pro_design_software` (`prog_url`) VALUES
+	('项目1prog_url');
+
+CREATE TABLE `pro_design_relation`(
+  `desi_id` int(100) NOT NULL COMMENT '项目设计表id',
+  `mech_id` int(100) NOT NULL COMMENT '机械设计表id', 
+	`elec_id` int(100) NOT NULL COMMENT '电气设计表id', 
+	`soft_id` int(100) NOT NULL COMMENT '软件设计表id', 
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+	INDEX `desi_id`(`desi_id`) USING BTREE,
+	INDEX `mech_id`(`mech_id`) USING BTREE,
+	INDEX `elec_id`(`elec_id`) USING BTREE,
+	INDEX `soft_id`(`soft_id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目设计关联表';
+-- 查询
+SELECT * FROM `pro_design_relation`;
+SELECT m.*, e.*, s.*
+FROM	pro_design d, pro_design_mechanics m, pro_design_electrical e, pro_design_software s, pro_design_relation r
+WHERE r.`desi_id` = d.id and r.`mech_id` = m.id and r.`elec_id` = e.id and r.`soft_id` = s.id and d.pro_id = '项目1proId';
+-- 插入
+INSERT INTO `pro_design_relation` (`desi_id`, `mech_id`, `elec_id`, `soft_id`) VALUES
+	(1, 1, 1, 1);
+	
+# 项目生产表分为pro_product、pro_product_purchase、pro_product_process、pro_product_outsource
+CREATE TABLE `pro_product`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `po_id` varchar(100) NOT NULL COMMENT '项目po号', 
+	`sign_id` VARCHAR(100) NOT NULL COMMENT '合同号',
+	`pro_id` VARCHAR(100) NOT NULL COMMENT '公司内部项目编号',
+	`pur_id` int(10) NOT NULL COMMENT '采购表id',
+	`process_id` int(10) NOT NULL COMMENT '机械零件加工表id',
+	`out_id` int(10) NOT NULL COMMENT '外协表id',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+	INDEX `po_id`(`po_id`) USING BTREE,
+	INDEX `sign_id`(`sign_id`) USING BTREE,
+  UNIQUE INDEX `pro_id`(`pro_id`) USING BTREE,
+	INDEX `pur_id`(`pur_id`) USING BTREE,
+	INDEX `process_id`(`process_id`) USING BTREE,
+	INDEX `out_id`(`out_id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目生产表';
+-- 修改表
+drop TABLE `pro_product`;
+-- 查询
+SELECT * FROM `pro_product`;
+-- 插入
+INSERT into `pro_product` (`po_id`, `sign_id`, `pro_id`, `pur_id`, `process_id`, `out_id`)values 
+	('项目1poId', '项目1signId', '项目1proId', 1, 1, 1);
+
+CREATE TABLE `pro_product_purchase`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `name` varchar(100) NOT NULL COMMENT '名称', 
+	`model` VARCHAR(100) NOT NULL COMMENT '型号',
+	`number` int(50) NOT NULL COMMENT '数量',
+	`supplier` VARCHAR(100) NOT NULL COMMENT '供应商',
+	`type` VARCHAR(50) NOT NULL COMMENT '类别',
+	`price` DOUBLE(10,2) NOT NULL COMMENT '价格',
+	`order_date` timestamp(0) NOT NULL COMMENT '下单日期',
+	`delivery_date` timestamp(0) NOT NULL COMMENT '货期',
+	`arrival_date` timestamp(0) NOT NULL COMMENT '实际到货日期',
+	`warehousing_date` timestamp(0) NOT NULL COMMENT '入库日期',
+	`location_number` int(50) NOT NULL COMMENT '库位号',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '采购表';
+-- 修改表
+DROP TABLE `pro_product_purchase`;
+-- 查询
+SELECT * FROM `pro_product_purchase`;
+-- 插入
+INSERT INTO `pro_product_purchase` (`name`, `model`, `number`, `supplier`, `type`, `price`, `order_date`, `delivery_date`, `arrival_date`, `warehousing_date`, `location_number`) VALUES
+	('项目1采购物品1', '项目1采购型号1', 50, '项目1采购物品1供应商', '项目1采购物品1类别', 7.45, '2022-02-01 00:00:00', '2023-02-01 00:00:00', '2022-02-02 00:00:00', '2022-02-02 00:00:00', 1);
+
+CREATE TABLE `pro_product_process`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `name` varchar(100) NOT NULL COMMENT '名称', 
+	`graph_number` VARCHAR(100) NOT NULL COMMENT '图号',
+	`number` int(50) NOT NULL COMMENT '数量',
+	`price` DOUBLE(10,2) NOT NULL COMMENT '价格',
+	`start_date` timestamp(0) NOT NULL COMMENT '加工开始日期',
+	`end_date` timestamp(0) NOT NULL COMMENT '实际加工完成日期',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '机械零件加工表';
+-- 查询
+SELECT * FROM `pro_product_process`;
+-- 插入
+INSERT INTO `pro_product_process` (`name`, `graph_number`, `number`, `price`, `start_date`, `end_date`) VALUES 
+	('项目1零件1', '零件1图号', 50, 66.88, '2022-02-01 00:00:00', '2022-02-03 00:00:00');
+
+CREATE TABLE `pro_product_outsource`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `po_id` varchar(100) NOT NULL COMMENT '项目poId', 
+	`company` VARCHAR(100) NOT NULL COMMENT '外协公司名称',
+	`eng_name` VARCHAR(10) NOT NULL COMMENT '外协公司对接人员',
+	`content_desc` VARCHAR(100) NOT NULL COMMENT '外协内容简单描述',
+	`file_url` varchar(300) NOT NULL COMMENT '外协文件存放路径',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '外协表';
+-- 修改表
+TRUNCATE table `pro_product_outsource`;
+DROP table `pro_product_outsource`;
+-- 查询
+SELECT * FROM `pro_product_outsource`
+-- 插入
+INSERT into `pro_product_outsource` (`po_id`, `company`, `eng_name`, `content_desc`, `file_url`) VALUES ('项目1poId', '外协公司名称', '外协公司对接人员', '外协内容简单描述', '外协文件存放路径');
+
+#项目装配表
+CREATE TABLE `pro_assembling`(
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键（自增长）',
+  `po_id` varchar(100) NOT NULL COMMENT '项目po号', 
+	`sign_id` VARCHAR(100) NOT NULL COMMENT '合同号',
+	`pro_id` VARCHAR(100) NOT NULL COMMENT '公司内部项目编号',
+	`me_name` VARCHAR(50) NOT NULL COMMENT '机械装配人员',
+	`me_start_date` timestamp(0) NOT NULL COMMENT '机械装配开始日期',
+	`me_end_date` timestamp(0) NOT NULL COMMENT '机械装配完成日期',
+	`el_name` VARCHAR(50) NOT NULL COMMENT '电气装配人员',
+	`el_start_date` timestamp(0) NOT NULL COMMENT '电气装配开始日期',
+	`el_end_date` timestamp(0) NOT NULL COMMENT '电气装配完成日期',
+	`so_name` VARCHAR(50) NOT NULL COMMENT '软件调试人员',
+	`so_start_date` timestamp(0) NOT NULL COMMENT '软件调试开始日期',
+	`so_end_date` timestamp(0) NOT NULL COMMENT '软件调试完成日期',
+	`check_name` VARCHAR(50) NOT NULL COMMENT '检验和测试人员',
+	`check_start_date` timestamp(0) NOT NULL COMMENT '检验和测试开始日期',
+	`check_end_date` timestamp(0) NOT NULL COMMENT '检验和测试完成日期',
+  `created` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '自动插入，创建时间',
+  `updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '自动插入，修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+	INDEX `po_id`(`po_id`) USING BTREE,
+	INDEX `sign_id`(`sign_id`) USING BTREE,
+  UNIQUE INDEX `pro_id`(`pro_id`) USING BTREE
+) ENGINE = InnoDB COMMENT = '项目装配表';
+DROP TABLE `pro_assembling`;
+-- 查询
+SELECT * FROM `pro_assembling`;
+-- 插入
+INSERT INTO `pro_assembling` (`po_id`, `sign_id`, `pro_id`, `me_name`, `me_start_date`, `me_end_date`, `el_name`, `el_start_date`,
+	`el_end_date`, `so_name`, `so_start_date`, `so_end_date`, `check_name`, `check_start_date`, `check_end_date`) VALUES
+	('项目1poId', '项目1signId', '项目1proId', '项目1me_name', '2022-02-01 00:00:00', '2022-02-02 00:00:00', '项目1el_name', '2022-02-01 00:00:00', '2022-02-02 00:00:00',
+	'项目1so_name', '2022-02-01 00:00:00', '2022-02-02 00:00:00', '项目1check_name', '2022-02-01 00:00:00', '2022-02-02 00:00:00');
